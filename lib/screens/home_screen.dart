@@ -4,7 +4,7 @@ import 'package:socket_flutter_app/services/socket_service.dart';
 import 'package:socket_flutter_app/utils/device_info.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String userName; // Nuevo parámetro para recibir el nombre del usuario
+  final String userName;
 
   const HomeScreen({Key? key, required this.userName}) : super(key: key);
 
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Text(
-              "Usuario: ${widget.userName}",  // Muestra el nombre del usuario
+              "Usuario: ${widget.userName}",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),

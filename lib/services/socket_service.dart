@@ -5,7 +5,7 @@ class SocketService {
   Socket? socket;
 
   Future<bool> connect(String deviceName, Function(String) onDataReceived) async {
-    const socketAddress = '192.168.23.224';
+    const socketAddress = '192.168.214.93';
     const socketPort = 5000;
 
     try {

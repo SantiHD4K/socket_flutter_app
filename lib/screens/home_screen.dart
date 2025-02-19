@@ -5,8 +5,10 @@ import 'package:socket_flutter_app/utils/device_info.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userName;
+  final String token;
 
-  const HomeScreen({Key? key, required this.userName}) : super(key: key);
+  const HomeScreen({Key? key, required this.userName, required this.token})
+      : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -44,7 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _isConnected = connected);
   }
 
-  void _sendMessage(String message) {
+  void _sendMessage(String action, String data) {
+    String message = "$action|${widget.token}|${widget.userName}|$data";
     _socketService.sendMessage(message);
   }
 
@@ -57,7 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ProductFormScreen(onSubmit: _sendMessage)),
+        builder: (context) => ProductFormScreen(
+          onSubmit: (productData) {
+            _socketService.sendMessage(
+                "CREAR|${widget.token}|${widget.userName}|$productData");
+          },
+        ),
+      ),
     );
   }
 
@@ -83,12 +92,13 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: _barcodeController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                  labelText: 'Código de Barras', border: OutlineInputBorder()),
+                labelText: 'Código de Barras',
+                border: OutlineInputBorder(),
+              ),
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () =>
-                  _sendMessage("CONSULTAR|${_barcodeController.text}"),
+              onPressed: () => _sendMessage("CONSULTAR", _barcodeController.text),
               child: Text('Buscar Producto'),
             ),
             SizedBox(height: 10),

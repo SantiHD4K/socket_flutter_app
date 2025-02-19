@@ -4,7 +4,8 @@ import 'dart:convert';
 class SocketService {
   Socket? socket;
 
-  Future<bool> connect(String deviceName, Function(String) onDataReceived) async {
+  Future<bool> connect(
+      String deviceName, Function(String) onDataReceived) async {
     const socketAddress = '192.168.214.93';
     const socketPort = 5000;
 
@@ -24,6 +25,11 @@ class SocketService {
   }
 
   void sendMessage(String message) {
+    socket?.write(message + '\n');
+  }
+
+  void sendMessageWithToken(String action, String token, String data) {
+    String message = "$action|$token|$data";
     socket?.write(message + '\n');
   }
 

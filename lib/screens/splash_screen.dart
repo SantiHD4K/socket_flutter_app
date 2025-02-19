@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'package:socket_flutter_app/services/socket_service.dart';
 import 'package:socket_flutter_app/utils/device_info.dart';
-import 'dart:convert';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -30,17 +29,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
     String dispositivo = await DeviceInfoUtil.getDeviceName();
 
-    String token = _generateToken(_nameController.text.trim(), dispositivo);
-
     bool connected = await _socketService.connect(
       dispositivo,
       (response) {
-        if (response == "LOGIN_EXITOSO") {
+        if (response.startsWith("LOGIN_EXITOSO|")) {
+          String token = response.split('|')[1];
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  HomeScreen(userName: _nameController.text.trim()),
+              builder: (context) => HomeScreen(
+                  userName: _nameController.text.trim(), token: token),
             ),
           );
         } else {
@@ -60,22 +58,11 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    _socketService.sendMessage(
-        "LOGIN|${_nameController.text.trim()}|$dispositivo|$token");
+    _socketService
+        .sendMessage("LOGIN|${_nameController.text.trim()}|$dispositivo");
   }
 
-  String _generateToken(String usuario, String dispositivo) {
-    Map<String, dynamic> tokenData = {
-      "usuario": usuario,
-      "dispositivo": dispositivo,
-      "fecha": DateTime.now().toIso8601String(),
-    };
 
-    String jsonToken = jsonEncode(tokenData);
-    String tokenBase64 = base64Encode(utf8.encode(jsonToken));
-
-    return tokenBase64;
-  }
 
   @override
   Widget build(BuildContext context) {

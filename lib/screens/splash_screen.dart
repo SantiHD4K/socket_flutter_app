@@ -4,6 +4,8 @@ import 'package:socket_flutter_app/services/socket_service.dart';
 import 'package:socket_flutter_app/utils/device_info.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }

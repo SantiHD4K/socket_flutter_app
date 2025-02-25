@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class ProductFormScreen extends StatefulWidget {
   final Function(String) onSubmit;
 
-  ProductFormScreen({required this.onSubmit});
+  const ProductFormScreen({super.key, required this.onSubmit});
 
   @override
   _ProductFormScreenState createState() => _ProductFormScreenState();

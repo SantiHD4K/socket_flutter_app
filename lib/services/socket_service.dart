@@ -25,12 +25,12 @@ class SocketService {
   }
 
   void sendMessage(String message) {
-    socket?.write(message + '\n');
+    socket?.write('$message\n');
   }
 
   void sendMessageWithToken(String action, String token, String data) {
     String message = "$action|$token|$data";
-    socket?.write(message + '\n');
+    socket?.write('$message\n');
   }
 
   void disconnect() {

@@ -7,6 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.socket_flutter_app"
+    namespace "com.mobile_scanner.plugin"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

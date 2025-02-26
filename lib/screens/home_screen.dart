@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/dashboard_cards.dart';
 import 'package:socket_flutter_app/screens/product_form_screen.dart';
 import 'package:socket_flutter_app/screens/ScannerPage.dart';
 import 'package:socket_flutter_app/services/socket_service.dart';
@@ -70,18 +71,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildQuickAccessButton(IconData icon, String label) {
+  Widget _buildQuickAccessButton(
+      BuildContext context, IconData icon, String label) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6.0),
+      padding: const EdgeInsets.all(8.0),
       child: SizedBox(
         width: 120,
         height: 120,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFFF1F4F8),
+            backgroundColor: const Color.fromARGB(255, 193, 195, 196),
             padding: EdgeInsets.zero,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
           onPressed: () {
             if (label == "Escáner") {
@@ -94,70 +97,15 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 60),
-              SizedBox(height: 5),
+              Icon(icon, size: 60, color: Color(0xFF95A1AC)),
+              const SizedBox(height: 5),
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Colors.black),
+                style: const TextStyle(fontSize: 12, color: Colors.black),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-// Método para generar tarjetas de datos
-  Widget _buildPanelCard(String title, String subtitle, String mainValue,
-      String bottomText, int progress, int total) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(subtitle, style: TextStyle(color: Colors.grey, fontSize: 12)),
-            Spacer(),
-            Text(mainValue,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Text(bottomText,
-                style: TextStyle(color: Colors.grey, fontSize: 20)),
-            if (total > 0) ...[
-              SizedBox(height: 5),
-              LinearProgressIndicator(
-                value: progress / total,
-                backgroundColor: Colors.grey[300],
-                color: Colors.blue,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text("$progress/$total", style: TextStyle(fontSize: 12)),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildChartCard(String title, String subtitle) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(subtitle, style: TextStyle(color: Colors.grey, fontSize: 12)),
-            Spacer(),
-            Expanded(
-              child: Placeholder(),
-            ),
-          ],
         ),
       ),
     );
@@ -402,51 +350,31 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 "Accesos rápidos",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    _buildQuickAccessButton(Icons.qr_code, "Escáner"),
-                    _buildQuickAccessButton(Icons.people, "Proveedores"),
-                    _buildQuickAccessButton(Icons.store, "Sedes"),
-                    _buildQuickAccessButton(Icons.account_circle, "Cuentas"),
-                    _buildQuickAccessButton(Icons.contact_page, "Directorio"),
+                    _buildQuickAccessButton(context, Icons.qr_code, "Escáner"),
+                    _buildQuickAccessButton(context, Icons.people, "Proveedores"),
+                    _buildQuickAccessButton(context, Icons.store, "Sedes"),
+                    _buildQuickAccessButton(context, Icons.account_circle, "Cuentas"),
+                    _buildQuickAccessButton(context, Icons.contact_page, "Directorio"),
                   ],
                 ),
               ),
-              SizedBox(height: 20),
-
-              // Panel Principal
-              Text(
+              const SizedBox(height: 20),
+                const Text(
                 "Panel principal",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics:
-                    NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  _buildPanelCard("Pedidos", "Hasta el 15 de Junio", "10",
-                      "Recibidos", 4, 10),
-                  _buildPanelCard("Ventas el día", "Junio 6 de 2022", "\$57'",
-                      "Millones de pesos", 0, 0),
-                  _buildChartCard("Your Week", "April 1-7th"),
-                  _buildPanelCard(
-                      "Daily tracker", "Goals", "", "Progress", 4, 10),
-                ],
-              ),
-              SizedBox(height: 20),
-
+              DashboardCards(),
+              const SizedBox(height: 20),
               Text(
                 "Dispositivo: $_deviceName",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

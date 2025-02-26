@@ -1,0 +1,2 @@
+C:/Users/User/Documents/GitHub/socket_flutter_app/android/app/.cxx/Debug/3e1xq2o2/x86/CMakeFiles/edit_cache.dir
+C:/Users/User/Documents/GitHub/socket_flutter_app/android/app/.cxx/Debug/3e1xq2o2/x86/CMakeFiles/rebuild_cache.dir

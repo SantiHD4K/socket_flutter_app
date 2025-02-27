@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../widgets/dashboard_cards.dart';
 import 'package:socket_flutter_app/screens/product_form_screen.dart';
 import 'package:socket_flutter_app/screens/ScannerPage.dart';
+import 'package:socket_flutter_app/screens/ProviderPage.dart';
+import 'package:socket_flutter_app/screens/StorePage.dart';
+import 'package:socket_flutter_app/screens/AccountsPage.dart';
 import 'package:socket_flutter_app/services/socket_service.dart';
 import 'package:socket_flutter_app/utils/device_info.dart';
 
@@ -80,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
         height: 120,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 193, 195, 196),
+            backgroundColor: const Color.fromARGB(255, 235, 236, 236),
             padding: EdgeInsets.zero,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -91,6 +94,24 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ScannerPage()),
+              );
+            }
+            if (label == "Proveedores") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProviderPage()),
+              );
+            }
+            if (label == "Sedes") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => StorePage()),
+              );
+            }
+            if (label == "Cuentas") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AccountsPage()),
               );
             }
           },
@@ -361,15 +382,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   children: [
                     _buildQuickAccessButton(context, Icons.qr_code, "Escáner"),
-                    _buildQuickAccessButton(context, Icons.people, "Proveedores"),
+                    _buildQuickAccessButton(
+                        context, Icons.people, "Proveedores"),
                     _buildQuickAccessButton(context, Icons.store, "Sedes"),
-                    _buildQuickAccessButton(context, Icons.account_circle, "Cuentas"),
-                    _buildQuickAccessButton(context, Icons.contact_page, "Directorio"),
+                    _buildQuickAccessButton(
+                        context, Icons.account_circle, "Cuentas"),
+                    _buildQuickAccessButton(
+                        context, Icons.contact_page, "Directorio"),
                   ],
                 ),
               ),
               const SizedBox(height: 20),
-                const Text(
+              const Text(
                 "Panel principal",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),

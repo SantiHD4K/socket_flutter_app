@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/dashboard_cards.dart';
 import '../widgets/custom_drawer.dart';
-import 'package:socket_flutter_app/screens/product_form_screen.dart';
 import 'package:socket_flutter_app/screens/ScannerPage.dart';
 import 'package:socket_flutter_app/screens/ProviderPage.dart';
 import 'package:socket_flutter_app/screens/StorePage.dart';
@@ -24,8 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _deviceNameController = TextEditingController();
   String _serverResponse = "";
   String _deviceName = "Desconocido";
-  bool _isConnected = false;
-  final SocketService _socketService = SocketService();
 
   @override
   void initState() {
@@ -39,40 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _deviceName = deviceName;
       _deviceNameController.text = deviceName;
     });
-  }
-
-  void _connectSocket() async {
-    bool connected = await _socketService.connect(
-      _deviceNameController.text,
-      (response) {
-        setState(() => _serverResponse = response);
-      },
-    );
-    setState(() => _isConnected = connected);
-  }
-
-  void _sendMessage(String action, String data) {
-    String message = "$action|${widget.token}|${widget.userName}|$data";
-    _socketService.sendMessage(message);
-  }
-
-  void _disconnectSocket() {
-    _socketService.disconnect();
-    setState(() => _isConnected = false);
-  }
-
-  void _navigateToForm() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProductFormScreen(
-          onSubmit: (productData) {
-            _socketService.sendMessage(
-                "CREAR|${widget.token}|${widget.userName}|$productData");
-          },
-        ),
-      ),
-    );
   }
 
   Widget _buildQuickAccessButton(
@@ -96,8 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ScannerPage(
-                    token: widget.token, // Enviar el token real
-                    userName: widget.userName, // Enviar el usuario real
+                    token: widget.token,
+                    userName: widget.userName,
                   ),
                 ),
               );
@@ -171,13 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   children: [
                     _buildQuickAccessButton(context, Icons.qr_code, "Escáner"),
-                    _buildQuickAccessButton(
-                        context, Icons.people, "Proveedores"),
+                    _buildQuickAccessButton(context, Icons.people, "Proveedores"),
                     _buildQuickAccessButton(context, Icons.store, "Sedes"),
-                    _buildQuickAccessButton(
-                        context, Icons.account_circle, "Cuentas"),
-                    _buildQuickAccessButton(
-                        context, Icons.contact_page, "Directorio"),
+                    _buildQuickAccessButton(context, Icons.account_circle, "Cuentas"),
+                    _buildQuickAccessButton(context, Icons.contact_page, "Directorio"),
                   ],
                 ),
               ),
@@ -186,45 +146,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Panel principal",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
-              DashboardCards(),
               const SizedBox(height: 20),
-              Text(
-                "Dispositivo: $_deviceName",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              TextField(
-                controller: _barcodeController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Código de Barras',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () =>
-                    _sendMessage("CONSULTAR", _barcodeController.text),
-                child: Text('Buscar Producto'),
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _navigateToForm,
-                child: Text('Registrar Producto'),
-              ),
-              SizedBox(height: 20),
-              Text(
-                _serverResponse,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+              DashboardCards(),
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isConnected ? _disconnectSocket : _connectSocket,
-        tooltip: _isConnected ? 'Desconectar' : 'Conectar',
-        child: Icon(_isConnected ? Icons.wifi_off : Icons.wifi),
       ),
     );
   }

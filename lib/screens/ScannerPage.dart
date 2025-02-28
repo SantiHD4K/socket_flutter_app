@@ -47,17 +47,27 @@ class _ScannerPageState extends State<ScannerPage> {
 
   Map<String, dynamic> _parseServerResponse(String response) {
     List<String> parts = response.split('|');
-    if (parts.length < 6) {
+    if (parts.length < 16) {
       return {};
     }
 
     return {
       'CodigoBarra': parts[0],
-      'Nombre': parts[1],
-      'Precio': parts[2],
-      'Costo': parts[3],
-      'PrecioPromo': parts[4],
-      'IVA': parts[5],
+      'PLU': parts[1],
+      'Nombre': parts[2],
+      'Precio': parts[3],
+      'Costo': parts[4],
+      'PrecioPromo': parts[5],
+      'IVA': parts[6],
+      'Activo': parts[7],
+      'Existencia': parts[8],
+      'Ext_Minima': parts[9],
+      'Ext_Maxima': parts[10],
+      'Rentabilidad_Minima': parts[11],
+      'Avg_Venta': parts[12],
+      'Avg_Compra': parts[13],
+      'Ultima_Compra': parts[14],
+      'Ultima_Venta': parts[15],
     };
   }
 
@@ -125,7 +135,7 @@ class _ScannerPageState extends State<ScannerPage> {
                           const FaIcon(
                             FontAwesomeIcons.expand,
                             color: Color.fromARGB(172, 255, 255, 255),
-                            size: 250, // Tamaño más pequeño para mejorar diseño
+                            size: 250,
                           ),
                         ],
                       ),
@@ -138,13 +148,7 @@ class _ScannerPageState extends State<ScannerPage> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
+                      boxShadow: [],
                     ),
                     child: Text(
                       _serverResponse.isNotEmpty &&
@@ -181,11 +185,11 @@ class _ScannerPageState extends State<ScannerPage> {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
+                          horizontal: 38, vertical: 15),
                     ),
                     child: const Text(
-                      'Ver detalles',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      'Ver Detalles',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
                 ],

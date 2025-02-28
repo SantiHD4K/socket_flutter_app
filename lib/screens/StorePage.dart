@@ -43,10 +43,10 @@ class _StorePageState extends State<StorePage> {
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Dos tarjetas por fila
-            crossAxisSpacing: 16.0, // Espacio horizontal entre tarjetas
-            mainAxisSpacing: 16.0, // Espacio vertical entre tarjetas
-            childAspectRatio: 1, // Hace que sean cuadradas
+            crossAxisCount: 2,
+            crossAxisSpacing: 16.0,
+            mainAxisSpacing: 16.0,
+            childAspectRatio: 1,
           ),
           itemCount: 11,
           itemBuilder: (context, index) => _buildStoreCard(context),
@@ -55,7 +55,6 @@ class _StorePageState extends State<StorePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF043275),
         onPressed: () {
-          print('Agregar nueva sede');
         },
         child: const Icon(Icons.add_rounded, color: Colors.white, size: 30.0),
       ),

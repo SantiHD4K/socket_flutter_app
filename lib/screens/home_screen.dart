@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/dashboard_cards.dart';
+import '../widgets/custom_drawer.dart';
 import 'package:socket_flutter_app/screens/product_form_screen.dart';
 import 'package:socket_flutter_app/screens/ScannerPage.dart';
 import 'package:socket_flutter_app/screens/ProviderPage.dart';
@@ -93,7 +94,12 @@ class _HomeScreenState extends State<HomeScreen> {
             if (label == "Escáner") {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ScannerPage()),
+                MaterialPageRoute(
+                  builder: (context) => ScannerPage(
+                    token: widget.token, // Enviar el token real
+                    userName: widget.userName, // Enviar el usuario real
+                  ),
+                ),
               );
             }
             if (label == "Proveedores") {
@@ -147,224 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      drawer: Drawer(
-        width: 350,
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 60, horizontal: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF043275),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.userName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Montserrat',
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        "Kodigo Fuente S.A.S",
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage:
-                        NetworkImage('https://picsum.photos/seed/903/600'),
-                  ),
-                ],
-              ),
-            ),
-            Stack(
-              children: [
-                Transform.translate(
-                  offset: Offset(0, -20),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 100,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                  offset: Offset(2, 4),
-                                ),
-                              ],
-                            ),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Salientes",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Container(
-                            height: 100,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                  offset: Offset(2, 4),
-                                ),
-                              ],
-                            ),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Procesados",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Información",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF95A1AC),
-                  ),
-                ),
-              ),
-            ),
-            Divider(),
-            ListTile(
-              title: Text(
-                "Reportes",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () {},
-            ),
-            Divider(),
-            ListTile(
-              title: Text(
-                "Consultas",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () {},
-            ),
-            Divider(),
-            ListTile(
-              title: Text(
-                "Proveedores",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () {},
-            ),
-            Divider(),
-            ListTile(
-              title: Text(
-                "Escáner",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () {},
-            ),
-            Divider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Configuración",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF95A1AC),
-                  ),
-                ),
-              ),
-            ),
-            Divider(),
-            ListTile(
-              title: Text(
-                "Conexiones",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () {},
-            ),
-            Divider(),
-            ListTile(
-              title: Text(
-                "Cuenta",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () {},
-            ),
-            Divider(),
-            ListTile(
-              title: Text(
-                "Acerca de",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () {},
-            ),
-            Divider(),
-          ],
-        ),
-      ),
+      drawer: CustomDrawer(userName: widget.userName),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: SingleChildScrollView(

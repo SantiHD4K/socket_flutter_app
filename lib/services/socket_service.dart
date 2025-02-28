@@ -3,16 +3,23 @@ import 'dart:convert';
 
 class SocketService {
   Socket? socket;
+  Function(String)? _onDataReceived;
 
-  Future<bool> connect(
-      String deviceName, Function(String) onDataReceived) async {
+  Future<bool> connect(String deviceName, Function(String) onDataReceived) async {
     const socketAddress = '192.168.214.93';
     const socketPort = 5000;
 
     try {
       socket = await Socket.connect(socketAddress, socketPort);
+      _onDataReceived = onDataReceived;
+
       socket!.listen(
-        (data) => onDataReceived(utf8.decode(data).trim()),
+        (data) {
+          String response = utf8.decode(data).trim();
+          if (_onDataReceived != null) {
+            _onDataReceived!(response);
+          }
+        },
         onError: (error) => disconnect(),
         onDone: () => disconnect(),
       );
@@ -35,5 +42,9 @@ class SocketService {
 
   void disconnect() {
     socket?.destroy();
+  }
+
+  void listen(Function(String) onDataReceived) {
+    _onDataReceived = onDataReceived;
   }
 }

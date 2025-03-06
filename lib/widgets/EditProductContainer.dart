@@ -103,13 +103,11 @@ class EditProductContainer extends StatelessWidget {
               _buildTextField(
                 label: 'Código de Barras',
                 controller: barcodeController,
-                hintText: 'Ingrese el código de barras',
               ),
               const SizedBox(height: 16.0),
               _buildTextField(
                 label: 'Nombre',
                 controller: nameController,
-                hintText: 'Ingrese el nombre del producto',
               ),
               const SizedBox(height: 16.0),
               Row(

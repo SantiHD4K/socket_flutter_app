@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class EditStockManagement extends StatelessWidget {
+class EditStockManagement extends StatefulWidget {
   final TextEditingController exitController;
   final TextEditingController rentMinController;
   final TextEditingController stockMinController;
@@ -18,7 +18,23 @@ class EditStockManagement extends StatelessWidget {
     required this.proComprController,
   }) : super(key: key);
 
-  Widget _buildTextField(String label, TextEditingController controller) {
+  @override
+  _EditStockManagementState createState() => _EditStockManagementState();
+}
+
+class _EditStockManagementState extends State<EditStockManagement> {
+  /// Agrega el símbolo de porcentaje solo para mostrarlo en la interfaz
+  String formatPercentage(String value) {
+    if (value.isEmpty) return '';
+    return value.contains('%') ? value : '$value%';
+  }
+
+  /// Limpia el porcentaje para evitar errores en cálculos
+  String cleanPercentage(String value) {
+    return value.replaceAll('%', '').trim();
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {bool isPercentage = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -34,8 +50,29 @@ class EditStockManagement extends StatelessWidget {
         TextFormField(
           controller: controller,
           keyboardType: TextInputType.number,
+          onTap: () {
+            if (isPercentage) {
+              setState(() {
+                controller.text = cleanPercentage(controller.text);
+              });
+            }
+          },
+          onEditingComplete: () {
+            if (isPercentage) {
+              setState(() {
+                controller.text = formatPercentage(controller.text);
+              });
+            }
+          },
+          onFieldSubmitted: (_) {
+            if (isPercentage) {
+              setState(() {
+                controller.text = formatPercentage(controller.text);
+              });
+            }
+          },
           decoration: InputDecoration(
-            hintText: '0.00',
+            hintText: isPercentage ? '0.00%' : '0.00',
             hintStyle: const TextStyle(
               fontFamily: 'Manrope',
               color: Color(0xFF161C24),
@@ -51,7 +88,7 @@ class EditStockManagement extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: const BorderSide(
-                color: Color(0x00000000),
+                color: Color(0xFF636F81),
                 width: 1.0,
               ),
               borderRadius: BorderRadius.circular(8.0),
@@ -72,6 +109,10 @@ class EditStockManagement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    widget.proComprController.text = formatPercentage(widget.proComprController.text);
+    widget.proVentController.text = formatPercentage(widget.proVentController.text);
+    widget.rentMinController.text = formatPercentage(widget.rentMinController.text);
+
     return Material(
       color: Colors.transparent,
       elevation: 2.0,
@@ -103,11 +144,15 @@ class EditStockManagement extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: _buildTextField('Existencia', exitController),
+                    child: _buildTextField('Existencia', widget.exitController),
                   ),
                   const SizedBox(width: 16.0),
                   Expanded(
-                    child: _buildTextField('Rentabilidad Mínima', rentMinController),
+                    child: _buildTextField('Stock Mínimo', widget.stockMinController),
+                  ),
+                  const SizedBox(width: 16.0),
+                  Expanded(
+                    child: _buildTextField('Stock Máximo', widget.stockMxnController),
                   ),
                 ],
               ),
@@ -116,24 +161,15 @@ class EditStockManagement extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: _buildTextField('Stock Mínimo', stockMinController),
+                    child: _buildTextField('Prom. Compra', widget.proComprController, isPercentage: true),
                   ),
                   const SizedBox(width: 16.0),
                   Expanded(
-                    child: _buildTextField('Promedio de Venta', proVentController),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: _buildTextField('Stock Máximo', stockMxnController),
+                    child: _buildTextField('Prom. Venta', widget.proVentController, isPercentage: true),
                   ),
                   const SizedBox(width: 16.0),
                   Expanded(
-                    child: _buildTextField('Promedio de Compra', proComprController),
+                    child: _buildTextField('Rentabilidad Mínima', widget.rentMinController, isPercentage: true),
                   ),
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ProductDetailsContainer extends StatelessWidget {
   final String plu;
@@ -18,8 +19,32 @@ class ProductDetailsContainer extends StatelessWidget {
     required this.lastSale,
   }) : super(key: key);
 
+String _extractDate(String dateTimeString) {
+  try {
+    dateTimeString = dateTimeString.trim();
+
+    DateFormat inputFormat;
+    if (dateTimeString.contains("a. m.") || dateTimeString.contains("p. m.")) {
+      inputFormat = DateFormat("dd/MM/yyyy hh:mm:ss a", "es_ES");
+    } else {
+      inputFormat = DateFormat("dd/MM/yyyy HH:mm:ss");
+    }
+
+    DateTime parsedDate = inputFormat.parse(dateTimeString);
+
+    DateFormat outputFormat = DateFormat("dd/MM/yyyy");
+
+    return outputFormat.format(parsedDate);
+  } catch (e) {
+    return "Fecha inválida";
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
+    print("Last Purchase: $lastPurchase");
+    print("Last Sale: $lastSale");
     return Material(
       color: Colors.transparent,
       elevation: 2.0,
@@ -76,7 +101,9 @@ class ProductDetailsContainer extends StatelessWidget {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: isActive ? const Color(0xFFE8F5E9) : const Color(0xFFFFEBEE),
+                      color: isActive
+                          ? const Color(0xFFE8F5E9)
+                          : const Color(0xFFFFEBEE),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: Padding(
@@ -85,7 +112,9 @@ class ProductDetailsContainer extends StatelessWidget {
                         isActive ? 'Activo' : 'Inactivo',
                         style: TextStyle(
                           fontFamily: 'Manrope',
-                          color: isActive ? const Color(0xFF2E7D32) : const Color(0xFFC62828),
+                          color: isActive
+                              ? const Color(0xFF2E7D32)
+                              : const Color(0xFFC62828),
                           fontSize: 12.0,
                           fontWeight: FontWeight.w500,
                         ),
@@ -112,7 +141,8 @@ class ProductDetailsContainer extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        lastPurchase,
+                        _extractDate(
+                            lastPurchase), // Extrae y formatea la fecha
                         style: const TextStyle(
                           fontFamily: 'Manrope',
                           color: Color(0xFF161C24),
@@ -135,7 +165,7 @@ class ProductDetailsContainer extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        lastSale,
+                        _extractDate(lastSale), // Extrae y formatea la fecha
                         style: const TextStyle(
                           fontFamily: 'Manrope',
                           color: Color(0xFF161C24),

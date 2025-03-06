@@ -1,50 +1,96 @@
 import 'dart:io';
 import 'dart:convert';
+import '../utils/device_info.dart';
 
 class SocketService {
   Socket? socket;
   Function(String)? _onDataReceived;
+  bool _isConnected = false;
 
-  Future<bool> connect(String deviceName, Function(String) onDataReceived) async {
-    const socketAddress = '192.168.214.93';
-    const socketPort = 5000;
+Future<bool> connect(String deviceName, Function(String) onDataReceived) async {
+  if (_isConnected) {
+    return true;
+  }
 
-    try {
-      socket = await Socket.connect(socketAddress, socketPort);
-      _onDataReceived = onDataReceived;
+  const socketAddress = '192.168.155.93';
+  const socketPort = 5000;
 
-      socket!.listen(
-        (data) {
-          String response = utf8.decode(data).trim();
-          if (_onDataReceived != null) {
-            _onDataReceived!(response);
-          }
-        },
-        onError: (error) => disconnect(),
-        onDone: () => disconnect(),
-      );
+  try {
+    socket = await Socket.connect(socketAddress, socketPort);
+    _isConnected = true;
+    _onDataReceived = onDataReceived;
 
-      socket!.write("$deviceName\n");
-      return true;
-    } catch (e) {
-      return false;
+    socket!.listen(
+      (data) {
+        String response = utf8.decode(data).trim();
+        if (_onDataReceived != null) {
+          _onDataReceived!(response);
+        }
+      },
+      onError: (error) {
+        disconnect();
+      },
+      onDone: () {
+        disconnect();
+      },
+    );
+
+    socket!.write("$deviceName\n");
+    return true;
+  } catch (e) {
+    _isConnected = false;
+    return false;
+  }
+}
+
+
+void sendMessage(String message) async {
+  if (!_isConnected || socket == null) {
+    String deviceName = await DeviceInfoUtil.getDeviceName();
+    bool reconnected = await connect(deviceName, (data) {});
+
+    if (!reconnected) {
+      return;
     }
   }
 
-  void sendMessage(String message) {
-    socket?.write('$message\n');
+  socket!.write('$message\r\n');
+}
+
+
+void sendMessageWithToken(
+    String action, String token, List<String> data) async {
+  if (!_isConnected || socket == null) {
+    String deviceName = await DeviceInfoUtil.getDeviceName();
+    bool reconnected = await connect(deviceName, (data) {});
+
+    if (!reconnected) {
+      return;
+    }
   }
 
-  void sendMessageWithToken(String action, String token, String data) {
-    String message = "$action|$token|$data";
-    socket?.write('$message\n');
-  }
+  List<String> cleanedData =
+      data.map((value) => value.replaceAll('%', '').trim()).toList();
+
+  String message = "$action|${cleanedData.join('|')}|$token";
+
+  socket!.write('$message\r\n');
+}
 
   void disconnect() {
-    socket?.destroy();
+    if (_isConnected) {
+      _isConnected = false;
+      socket?.destroy();
+      socket = null;
+    }
   }
 
-  void listen(Function(String) onDataReceived) {
-    _onDataReceived = onDataReceived;
-  }
+void listen(Function(String) onDataReceived) {
+  _onDataReceived = (data) {
+    onDataReceived(data);
+  };
+}
+
+
+  bool get isConnected => _isConnected;
 }

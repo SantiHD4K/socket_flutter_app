@@ -49,9 +49,15 @@ class _ScannerPageState extends State<ScannerPage> {
     bool connected = await _socketService.connect(widget.userName, (response) {
       setState(() {
         Map<String, dynamic> productData = _parseServerResponse(response);
-        if (productData.isNotEmpty && productData.containsKey('Nombre')) {
+
+        if (productData.isNotEmpty &&
+            productData.containsKey('Nombre') &&
+            productData['Nombre'].isNotEmpty) {
           _lastProduct = productData;
           _serverResponse = response;
+        } else {
+          _lastProduct = null;
+          _serverResponse = "Código erróneo o no registrado.";
         }
       });
     });
@@ -64,8 +70,7 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   void _sendMessage(String action, String data) {
-    String message =
-        "$action|${widget.token}|${widget.userName}|$data";
+    String message = "$action|${widget.token}|${widget.userName}|$data";
     _socketService.sendMessage(message);
   }
 
@@ -154,8 +159,10 @@ class _ScannerPageState extends State<ScannerPage> {
                                   if (this.barcode != code) {
                                     setState(() {
                                       this.barcode = code;
-                                      _sendMessage("CONSULTAR", code,
-                                          );
+                                      _sendMessage(
+                                        "CONSULTAR",
+                                        code,
+                                      );
                                     });
                                   }
                                 },
@@ -177,14 +184,34 @@ class _ScannerPageState extends State<ScannerPage> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Text(
-                          _lastProduct != null
-                              ? 'Producto detectado: ${_lastProduct!['Nombre']}'
-                              : 'Escaneando...',
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
+                        child: _serverResponse ==
+                                "Esperando respuesta del servidor..."
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(width: 10),
+                                  const Text(
+                                    'Enfoca la cámara hacia el código de barras',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                _lastProduct != null
+                                    ? 'Producto detectado: ${_lastProduct!['Nombre']}'
+                                    : _serverResponse,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: _lastProduct != null
+                                      ? Colors.black
+                                      : Colors.red,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
@@ -195,7 +222,7 @@ class _ScannerPageState extends State<ScannerPage> {
                                       _parseServerResponse(_serverResponse);
                                   if (productData.isNotEmpty &&
                                       productData.containsKey('Nombre')) {
-                                    Navigator.push(
+                                    Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
@@ -267,16 +294,17 @@ class _ScannerPageState extends State<ScannerPage> {
                   ),
                 FloatingActionButton(
                   onPressed: () async {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreateProductScreen (
+                        builder: (context) => CreateProductScreen(
                           token: widget.token,
                           userName: widget.userName,
                         ),
                       ),
                     );
-                  },                  elevation: _isExpanded ? 6 : 0,
+                  },
+                  elevation: _isExpanded ? 6 : 0,
                   backgroundColor: Color(0xFF126CD8),
                   child: const Icon(Icons.add, color: Colors.white),
                 ),
@@ -302,7 +330,7 @@ class _ScannerPageState extends State<ScannerPage> {
                   ),
                 FloatingActionButton(
                   onPressed: () async {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ProductListScreen(

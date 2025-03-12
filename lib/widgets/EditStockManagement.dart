@@ -23,18 +23,16 @@ class EditStockManagement extends StatefulWidget {
 }
 
 class _EditStockManagementState extends State<EditStockManagement> {
-  /// Agrega el símbolo de porcentaje solo para mostrarlo en la interfaz
   String formatPercentage(String value) {
     if (value.isEmpty) return '';
     return value.contains('%') ? value : '$value%';
   }
 
-  /// Limpia el porcentaje para evitar errores en cálculos
   String cleanPercentage(String value) {
     return value.replaceAll('%', '').trim();
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {bool isPercentage = false}) {
+  Widget _buildTextField(String label, TextEditingController controller, {bool isPercentage = false, bool isInteger = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -49,7 +47,7 @@ class _EditStockManagementState extends State<EditStockManagement> {
         ),
         TextFormField(
           controller: controller,
-          keyboardType: TextInputType.number,
+          keyboardType: isInteger ? TextInputType.number : TextInputType.numberWithOptions(decimal: true),
           onTap: () {
             if (isPercentage) {
               setState(() {
@@ -72,7 +70,7 @@ class _EditStockManagementState extends State<EditStockManagement> {
             }
           },
           decoration: InputDecoration(
-            hintText: isPercentage ? '0.00%' : '0.00',
+            hintText: isPercentage ? '0.00%' : isInteger ? '0' : '0.00',
             hintStyle: const TextStyle(
               fontFamily: 'Manrope',
               color: Color(0xFF161C24),
@@ -144,15 +142,15 @@ class _EditStockManagementState extends State<EditStockManagement> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: _buildTextField('Existencia', widget.exitController),
+                    child: _buildTextField('Existencia', widget.exitController, isInteger: true),
                   ),
                   const SizedBox(width: 16.0),
                   Expanded(
-                    child: _buildTextField('Stock Mínimo', widget.stockMinController),
+                    child: _buildTextField('Stock Mínimo', widget.stockMinController, isInteger: true),
                   ),
                   const SizedBox(width: 16.0),
                   Expanded(
-                    child: _buildTextField('Stock Máximo', widget.stockMxnController),
+                    child: _buildTextField('Stock Máximo', widget.stockMxnController, isInteger: true),
                   ),
                 ],
               ),

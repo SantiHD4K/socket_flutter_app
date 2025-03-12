@@ -59,7 +59,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     try {
       _socketService.sendMessage(message);
     } catch (e) {
-      print("Error al enviar mensaje: $e");
+      print("Error: $e");
     }
   }
 
@@ -236,7 +236,7 @@ class ProductContainer extends StatelessWidget {
                     icon: const Icon(Icons.more_vert, color: Colors.grey),
                     onSelected: (value) {
                       if (value == 'ver') {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ProductDetailsScreen(

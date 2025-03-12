@@ -1,0 +1,18 @@
+<div style='text-align: center;'>
+    <img id='barcodeImage'/>
+</div>
+<div style='padding-top:8px; text-align:center; font-size:15px; font-family: Source Sans Pro, Arial, sans-serif;'>
+    <input type='text' id='codeInput' placeholder='Ingrese codigo de barras' />
+    <button onclick='generateBarcode()'>Generar</button>
+</div>
+
+<script>
+    function generateBarcode() {
+        const codeBar = document.getElementById('codeInput').value;
+        if (codeBar) {
+            document.getElementById('barcodeImage').src = `https://barcode.tec-it.com/barcode.ashx?data=${encodeURIComponent(codeBar)}&code=Code128&translate-esc=on`;
+        } else {
+            alert('Por favor, ingrese un código de barras.');
+        }
+    }
+</script>

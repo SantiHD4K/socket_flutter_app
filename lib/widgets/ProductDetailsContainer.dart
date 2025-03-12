@@ -43,8 +43,6 @@ String _extractDate(String dateTimeString) {
 
   @override
   Widget build(BuildContext context) {
-    print("Last Purchase: $lastPurchase");
-    print("Last Sale: $lastSale");
     return Material(
       color: Colors.transparent,
       elevation: 2.0,

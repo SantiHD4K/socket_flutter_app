@@ -7,75 +7,80 @@ class SocketService {
   Function(String)? _onDataReceived;
   bool _isConnected = false;
 
-Future<bool> connect(String deviceName, Function(String) onDataReceived) async {
-  if (_isConnected) {
-    return true;
-  }
+  Future<bool> connect(
+      String deviceName, Function(String) onDataReceived) async {
+    if (_isConnected) {
+      return true;
+    }
 
-  const socketAddress = '192.168.155.93';
-  const socketPort = 5000;
+    const socketAddress = '192.168.155.93';
+    const socketPort = 5000;
 
-  try {
-    socket = await Socket.connect(socketAddress, socketPort);
-    _isConnected = true;
-    _onDataReceived = onDataReceived;
+    try {
+      socket = await Socket.connect(socketAddress, socketPort);
+      _isConnected = true;
+      _onDataReceived = onDataReceived;
 
-    socket!.listen(
-      (data) {
-        String response = utf8.decode(data).trim();
-        if (_onDataReceived != null) {
-          _onDataReceived!(response);
-        }
-      },
-      onError: (error) {
-        disconnect();
-      },
-      onDone: () {
-        disconnect();
-      },
-    );
+      socket!.listen(
+        (data) {
+          String response = utf8.decode(data).trim();
+          print("Respuesta del servidor: $response");
 
-    socket!.write("$deviceName\n");
-    return true;
-  } catch (e) {
-    _isConnected = false;
-    return false;
-  }
-}
+          if (_onDataReceived != null) {
+            _onDataReceived!(response);
+          }
+        },
+        onError: (error) {
+          print("Error en la conexión: $error");
+          disconnect();
+        },
+        onDone: () {
+          print(
+              "Conexión cerrada por el servidor.");
+          disconnect();
+        },
+      );
 
-
-void sendMessage(String message) async {
-  if (!_isConnected || socket == null) {
-    String deviceName = await DeviceInfoUtil.getDeviceName();
-    bool reconnected = await connect(deviceName, (data) {});
-
-    if (!reconnected) {
-      return;
+      socket!.write("$deviceName\n");
+      return true;
+    } catch (e) {
+      _isConnected = false;
+      return false;
     }
   }
 
-  socket!.write('$message\r\n');
-}
+  void sendMessage(String message) async {
+    if (!_isConnected || socket == null) {
+      String deviceName = await DeviceInfoUtil.getDeviceName();
+      bool reconnected = await connect(deviceName, (data) {});
 
-
-void sendMessageWithToken(
-    String action, String token, List<String> data) async {
-  if (!_isConnected || socket == null) {
-    String deviceName = await DeviceInfoUtil.getDeviceName();
-    bool reconnected = await connect(deviceName, (data) {});
-
-    if (!reconnected) {
-      return;
+      if (!reconnected) {
+        return;
+      }
     }
+
+    socket!.write('$message\r\n');
   }
 
-  List<String> cleanedData =
-      data.map((value) => value.replaceAll('%', '').trim()).toList();
+  void sendMessageWithToken(
+      String action, String token, List<String> data) async {
+    if (!_isConnected || socket == null) {
+      String deviceName = await DeviceInfoUtil.getDeviceName();
+      bool reconnected = await connect(deviceName, (data) {});
 
-  String message = "$action|${cleanedData.join('|')}|$token";
+      if (!reconnected) {
+        print("Error: No se pudo reconectar al servidor.");
+        return;
+      }
+    }
 
-  socket!.write('$message\r\n');
-}
+    List<String> cleanedData =
+        data.map((value) => value.replaceAll('%', '').trim()).toList();
+    String message = "$action|${cleanedData.join('|')}|$token";
+
+    print("Enviando mensaje: $message");
+    socket!.write('$message\r\n');
+  }
 
   void disconnect() {
     if (_isConnected) {
@@ -85,12 +90,11 @@ void sendMessageWithToken(
     }
   }
 
-void listen(Function(String) onDataReceived) {
-  _onDataReceived = (data) {
-    onDataReceived(data);
-  };
-}
-
+  void listen(Function(String) onDataReceived) {
+    _onDataReceived = (data) {
+      onDataReceived(data);
+    };
+  }
 
   bool get isConnected => _isConnected;
 }

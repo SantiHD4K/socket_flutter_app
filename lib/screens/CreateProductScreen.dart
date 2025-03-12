@@ -83,17 +83,17 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   }
 
 void _createProduct() {
-  String data = "${_barcodeController.text.trim()}|"
-                "${_pluController.text.trim()}|"
-                "${_nameController.text.trim()}|"
-                "${_priceController.text.trim().replaceAll(',', '.')}|"
-                "${_costController.text.trim().replaceAll(',', '.')}|"
-                "0.00|0|1|0|0|0|0.00|0.00|0.00|"
-                "0000-00-00 00:00:00|0000-00-00 00:00:00";
+String now = DateTime.now().toString().split('.')[0];
+String data = "${_barcodeController.text.trim()}|"
+              "${_pluController.text.trim()}|"
+              "${_nameController.text.trim()}|"
+              "${_priceController.text.trim().replaceAll(',', '.')}|"
+              "${_costController.text.trim().replaceAll(',', '.')}|"
+              "0.00|0|1|0|0|0|0.00|0.00|0.00|"
+              "$now|$now";
+
 
   String message = "CREAR|${widget.token}|${widget.userName}|$data";
-
-  print("Mensaje formateado antes de enviar: '$message'");
 
   try {
     _socketService.sendMessage(message);

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../widgets/ProductDetailsContainer.dart';
 import '../widgets/EditProductContainer.dart';
@@ -53,7 +54,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   String formatDate(DateTime date) {
     return DateFormat("yyyy-MM-dd HH:mm:ss").format(date);
   }
-  
+
   DateTime parseDate(String? dateString) {
     if (dateString == null || dateString.isEmpty) return DateTime(2000, 1, 1);
     try {
@@ -63,52 +64,48 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }
   }
 
-String cleanPercentage(String value) {
-  return value.replaceAll('%', '').replaceAll(',', '.').trim();
-}
-
+  String cleanPercentage(String value) {
+    return value.replaceAll('%', '').replaceAll(',', '.').trim();
+  }
 
   String extractNumbers(String value) {
     return value.replaceAll(RegExp(r'[^0-9]'), '');
   }
+
+
 void _updateProduct() {
-  List<String> updatedData = [
-    extractNumbers(widget.productData['CodigoBarra'].toString()),
-    widget.productData['PLU'] ?? '',
-    _nameController.text,
-    _priceController.text.replaceAll(',', '.'),
-    _costController.text.replaceAll(',', '.'),
-    _proVentController.text.replaceAll(',', '.'),
-    _proComprController.text.replaceAll(',', '.'),
-    (widget.productData['Activo']?.toString().toLowerCase() == 'true' ||
-            widget.productData['Activo'] == '1')
-        ? 'True'
-        : 'False',
-    _exitController.text,
-    _stockMinController.text,
-    _stockMxnController.text,
-    cleanPercentage(_rentMinController.text).replaceAll(',', '.'),
-    cleanPercentage(_proVentController.text).replaceAll(',', '.'),
-    cleanPercentage(_proComprController.text).replaceAll(',', '.'),
-    formatDate(parseDate(widget.productData['Ultima_Compra'])),
-    formatDate(parseDate(widget.productData['Ultima_Venta']))
-  ];
+    String data =
+        "${extractNumbers(widget.productData['CodigoBarra'].toString())}|"
+        "${widget.productData['PLU'] ?? ''}|"
+        "${_nameController.text.trim()}|"
+        "${_priceController.text.trim().replaceAll(',', '.')}|"
+        "${_costController.text.trim().replaceAll(',', '.')}|"
+        "${cleanPercentage(_proVentController.text).replaceAll(',', '.')}|"
+        "${widget.productData['IVA'] ?? '0'}|"
+        "${(widget.productData['Activo']?.toString().toLowerCase() == 'true' || widget.productData['Activo'] == '1') ? '1' : '0'}|"
+        "${_exitController.text.trim()}|"
+        "${_stockMinController.text.trim()}|"
+        "${_stockMxnController.text.trim()}|"
+        "${cleanPercentage(_rentMinController.text).replaceAll(',', '.')}|"
+        "${int.tryParse(cleanPercentage(_proVentController.text).replaceAll(',', '.')) ?? 0}|"
+        "${cleanPercentage(_proComprController.text).replaceAll(',', '.')}|"
+        "${formatDate(parseDate(widget.productData['Ultima_Compra']))}|"
+        "${formatDate(parseDate(widget.productData['Ultima_Venta']))}";
 
-  String message =
-      "ACTUALIZAR|${widget.token}|${widget.userName}|${updatedData.join('|')}";
+    String message = "ACTUALIZAR|${widget.token}|${widget.userName}|$data";
 
-  try {
-    _socketService.sendMessage(message);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Producto actualizado con éxito')),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error al actualizar producto: $e')),
-    );
+    try {
+      _socketService.sendMessage(message);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Producto actualizado con éxito')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al actualizar producto: $e')),
+      );
+    }
   }
-}
-
 
 
   @override
